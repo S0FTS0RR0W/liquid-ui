@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/fs"
 	"net/http"
 	"strconv"
 
@@ -17,7 +18,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 }
 
 // registerRoutes attaches all API endpoints to the mux.
-func registerRoutes(mux *http.ServeMux) {
+func registerRoutes(mux *http.ServeMux, frontendFS fs.FS) {
 
 	// ------------------------------------------------------------
 	// Health check
@@ -163,4 +164,10 @@ func registerRoutes(mux *http.ServeMux) {
 
 		writeJSON(w, 200, map[string]string{"status": "applied"})
 	})
+
+	// ------------------------------------------------------------
+	// Frontend Static Files
+	// ------------------------------------------------------------
+	fileServer := http.FileServer(http.FS(frontendFS))
+	mux.Handle("/", fileServer)
 }

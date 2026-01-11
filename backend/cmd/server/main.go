@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"embed"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +12,9 @@ import (
 	"syscall"
 	"time"
 )
+
+//go:embed dist
+var distFS embed.FS
 
 // enableCORS middleware to handle CORS for development
 func enableCORS(next http.Handler) http.Handler {
@@ -30,8 +35,14 @@ func enableCORS(next http.Handler) http.Handler {
 func main() {
 	mux := http.NewServeMux()
 
+	// Prepare frontend filesystem
+	frontendFS, err := fs.Sub(distFS, "dist")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Register routes from routes.go
-	registerRoutes(mux)
+	registerRoutes(mux, frontendFS)
 
 	// Wrap mux with CORS middleware
 	handler := enableCORS(mux)

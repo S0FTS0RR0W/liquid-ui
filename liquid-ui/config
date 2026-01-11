@@ -1,0 +1,9 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+[remote "origin"]
+	url = https://github.com/S0FTS0RR0W/liquid-ui.git
+	tagOpt = --no-tags
+	fetch = +refs/*:refs/*
+	mirror = true
